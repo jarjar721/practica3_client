@@ -6,7 +6,8 @@ import hashlib
 
 import socket_connector
 
-ip = "127.0.0.1" # Default IP (Local)
+#ip = "127.0.0.1" # Default IP (Local)
+ip = "10.2.126.2" # Default IP (Server UCAB)
 port = 19876 # Defaul Port
 
 Client_ip = socket.gethostbyname(socket.gethostname())
@@ -96,7 +97,7 @@ def start():
         os.system("cls")
         start()
     elif response == 4:
-        encoded_message = socket_connector.opensocket_UDP(ip, UDP_port, sock)
+        encoded_message = socket_connector.opensocket_UDP(Client_ip, UDP_port, sock)
         os.system("cls")
         start()
     elif response == 5:
