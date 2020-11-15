@@ -6,6 +6,8 @@ import hashlib
 
 import socket_connector
 
+connected = False
+
 #ip = "127.0.0.1" # Default IP (Local)
 ip = "10.2.126.2" # Default IP (Server UCAB)
 port = 19876 # Defaul Port
@@ -65,7 +67,8 @@ def change_server_settings():
 
 
 def start():
-    global ip, port, sock, Client_ip, UDP_port, realmessage, encoded_message
+    global ip, port, sock, Client_ip, connected
+    global UDP_port, realmessage, encoded_message
 
     print_header()
     print("""
@@ -93,23 +96,56 @@ def start():
         os.system("cls")
         start()
     elif response == 3:
-        socket_connector.get_msglen(sock, ip, port)
-        os.system("cls")
-        start()
+        if connected == True:
+            socket_connector.get_msglen(sock, ip, port)
+            os.system("cls")
+            start()
+        else:
+            print(colorama.Fore.RED + """
+            ¡No se ha conectado al servidor con un usuario!""")
+            print(colorama.Style.RESET_ALL)
+            time.sleep(5)
+            os.system("cls")
+            start() 
     elif response == 4:
-        encoded_message = socket_connector.opensocket_UDP(Client_ip, UDP_port, sock)
-        os.system("cls")
-        start()
+        if connected == True:
+            encoded_message = socket_connector.opensocket_UDP(Client_ip, UDP_port, sock)
+            os.system("cls")
+            start()
+        else:
+            print(colorama.Fore.RED + """
+            ¡No se ha conectado al servidor con un usuario!""")
+            print(colorama.Style.RESET_ALL)
+            time.sleep(5)
+            os.system("cls")
+            start()
     elif response == 5:
-        message = encoded_message.encode()
-        messageMD5 = hashlib.md5(message).hexdigest()
-        socket_connector.validate_checksum(sock, ip, port, messageMD5)
-        os.system("cls")
-        start()
+        if connected == True:
+            message = encoded_message.encode()
+            messageMD5 = hashlib.md5(message).hexdigest()
+            socket_connector.validate_checksum(sock, ip, port, messageMD5)
+            os.system("cls")
+            os.system("cls")
+            start()
+        else:
+            print(colorama.Fore.RED + """
+            ¡No se ha conectado al servidor con un usuario!""")
+            print(colorama.Style.RESET_ALL)
+            time.sleep(5)
+            os.system("cls")
+            start()
     elif response == 6:
-        socket_connector.terminate_TCPsocket(sock)
-        os.system("cls")
-        start()
+        if connected == True:
+            socket_connector.terminate_TCPsocket(sock)
+            os.system("cls")
+            start()
+        else:
+            print(colorama.Fore.RED + """
+            ¡No se ha conectado al servidor con un usuario!""")
+            print(colorama.Style.RESET_ALL)
+            time.sleep(5)
+            os.system("cls")
+            start()
     else:
         print("""
         ¡Gracias por participar!""")
@@ -138,7 +174,7 @@ def print_menu1():
 
 
 def print_menu_autenticacion():
-    global ip, port
+    global ip, port, connected
 
     print("""
     ------- 2. CONECTARSE AL SERVIDOR ------- """)
@@ -151,7 +187,7 @@ def print_menu_autenticacion():
     USERNAME""", end = ": ")
     response = input()
 
-    sock = socket_connector.connect_server(ip, port, response)
+    sock, connected = socket_connector.connect_server(connected, ip, port, response)
     return sock
 
 start()
